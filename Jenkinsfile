@@ -27,8 +27,8 @@ pipeline {
         stage('2. Cloning Repository'){
           steps {
             echo '2. Cloning Repository'
-            git branch: "${GIT_TARGET_BRANCH}"
-                credentials: "${GIT_CREDENTIONALS_ID}"
+            git branch: "${GIT_TARGET_BRANCH}",
+                credentials: "${GIT_CREDENTIONALS_ID}",
                 url: "${GIT_REPOSITORY_URL}"
 
             }
