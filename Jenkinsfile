@@ -28,7 +28,7 @@ pipeline {
           steps {
             echo '2. Cloning Repository'
             git branch: "${GIT_TARGET_BRANCH}",
-                credentials: "${GIT_CREDENTIONALS_ID}",
+                credentialsId: "${GIT_CREDENTIONALS_ID}",
                 url: "${GIT_REPOSITORY_URL}"
 
             }
