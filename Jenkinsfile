@@ -62,8 +62,8 @@ pipeline {
                 failure {
                     script {
                         sh '''
-                        docker rm -f ${AWS_ECR_URI}/${AWS_ECR_IMAGE_NAME}:${BUILD_NUMBER}
-                        docker rm -f ${AWS_ECR_URI}/${AWS_ECR_IMAGE_NAME}:latest
+                        docker rmi ${AWS_ECR_URI}/${AWS_ECR_IMAGE_NAME}:${BUILD_NUMBER}
+                        docker rmi ${AWS_ECR_URI}/${AWS_ECR_IMAGE_NAME}:latest
                         echo docker image push fail
                         '''
                     }
@@ -72,8 +72,8 @@ pipeline {
                     script {
                    
                         sh '''
-                        docker rm -f ${AWS_ECR_URI}/${AWS_ECR_IMAGE_NAME}:${BUILD_NUMBER}
-                        docker rm -f ${AWS_ECR_URI}/${AWS_ECR_IMAGE_NAME}:latest
+                        docker rmi ${AWS_ECR_URI}/${AWS_ECR_IMAGE_NAME}:${BUILD_NUMBER}
+                        docker rmi ${AWS_ECR_URI}/${AWS_ECR_IMAGE_NAME}:latest
                         echo docker image push success
                         '''
                     }
