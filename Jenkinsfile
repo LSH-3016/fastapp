@@ -1,49 +1,60 @@
 pipeline {
     agent any
-    
+   
   environment {
         TIME_ZONE = 'Asia/Seoul'
-
-        // GitHub
+       
+        // GitHub 계정정보. 본인껄로 넣으세요!!
         GIT_TARGET_BRANCH = 'main'
-        GIT_REPOSITORY_URL = 'https://github.com/LSH-3016/fastapp'
+        GIT_REPOSITORY_URL = 'https://github.com/lsh-3016/fastapp'
         GIT_CREDENTIONALS_ID = 'git_cre'
 
-        // AWS ECR
+
+        // AWS ECR 정보. 본인껄로 넣으세요!!
         AWS_ECR_CREDENTIAL_ID = 'aws_cre'
-        AWS_ECR_URI = '324547056370.dkr.ecr.ap-northeast-2.amazonaws.com'
-        AWS_ECR_IMAGE_NAME = 'fast'
-        AWS_RESION = 'ap-northeast-2'
+        AWS_ECR_URI = '324547056370.dkr.ecr.ap-northeast-2.amazonaws.com' // 레지스트리주소
+        AWS_ECR_IMAGE_NAME = 'fast' // 레포지토리이름.
+        AWS_REGION = 'ap-northeast-2'
+       
     }
-    
+
     stages {
-        stage('1. init') {
+        // 첫번째 스테이지 : 초기화.
+
+        stage('1.init') {
             steps {
-                echo "1. init stage"
+                echo '1.init stage'
                 deleteDir()
             }
         }
 
-        stage('2. Cloning Repository'){
-          steps {
-            echo '2. Cloning Repository'
-            git branch: "${GIT_TARGET_BRANCH}",
-                credentialsId: "${GIT_CREDENTIONALS_ID}",
-                url: "${GIT_REPOSITORY_URL}"
+        // 두번째 스테이지 : 소스코드 클론
 
+        stage('2.Cloning Repository') {
+            steps {
+                echo '2.Cloning Repository'
+                git branch: "${GIT_TARGET_BRANCH}",
+                    credentialsId: "${GIT_CREDENTIONALS_ID}",
+                    url: "${GIT_REPOSITORY_URL}"
+
+                // 깃플러그인 설치하면 마치 함수쓰듯 사용가능.
             }
+       
         }
 
-        stage('3. Build Docker Image'){
-            steps{
-                script{
+        stage('3.Build Docker Image') {
+            steps {
+                script {
                     sh '''
                         docker build -t ${AWS_ECR_URI}/${AWS_ECR_IMAGE_NAME}:${BUILD_NUMBER} .
                         docker build -t ${AWS_ECR_URI}/${AWS_ECR_IMAGE_NAME}:latest .
                     '''
                 }
+                // 명령어가 많아질것같아서 스크립트 블록을 추가.
+                // BUILD_NUMBER = 젠킨스가 제공해주는 변수.
             }
         }
+
 
         stage('4.Push to ECR') {
             steps {
@@ -62,8 +73,8 @@ pipeline {
                 failure {
                     script {
                         sh '''
-                        docker rmi ${AWS_ECR_URI}/${AWS_ECR_IMAGE_NAME}:${BUILD_NUMBER}
-                        docker rmi ${AWS_ECR_URI}/${AWS_ECR_IMAGE_NAME}:latest
+                        docker rm -f ${AWS_ECR_URI}/${AWS_ECR_IMAGE_NAME}:${BUILD_NUMBER}
+                        docker rm -f ${AWS_ECR_URI}/${AWS_ECR_IMAGE_NAME}:latest
                         echo docker image push fail
                         '''
                     }
@@ -72,8 +83,8 @@ pipeline {
                     script {
                    
                         sh '''
-                        docker rmi ${AWS_ECR_URI}/${AWS_ECR_IMAGE_NAME}:${BUILD_NUMBER}
-                        docker rmi ${AWS_ECR_URI}/${AWS_ECR_IMAGE_NAME}:latest
+                        docker rm -f ${AWS_ECR_URI}/${AWS_ECR_IMAGE_NAME}:${BUILD_NUMBER}
+                        docker rm -f ${AWS_ECR_URI}/${AWS_ECR_IMAGE_NAME}:latest
                         echo docker image push success
                         '''
                     }
@@ -82,7 +93,5 @@ pipeline {
             }
         }
 
-
-    }    
-
+    }
 }
