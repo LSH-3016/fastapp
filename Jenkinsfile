@@ -11,7 +11,7 @@ pipeline {
 
         GIT_EMAIL = 'chungune2@gmail.com'
         GIT_NAME = 'lsh-3016'
-        GIT_REPOSITORY_DEP = 'git@github.com:lsh-3016/deployment.git'
+        GIT_REPOSITORY_DEP = 'https://github.com/LSH-3016/deployment'
 
 
         // AWS ECR 정보. 본인껄로 넣으세요!!
@@ -96,7 +96,7 @@ pipeline {
                 }                
             }
         }
-        
+
         stage('5.EKS manifest file update') {
             steps {
                 git credentialsId: GIT_CREDENTIONALS_ID, url: GIT_REPOSITORY_DEP, branch: 'main'
